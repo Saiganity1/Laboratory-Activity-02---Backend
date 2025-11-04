@@ -24,6 +24,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "192.168.30.227",
+    "https://snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
+    "snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
 ]
 
 # ✅ CSRF trusted origins (must include scheme)
@@ -31,6 +33,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://sicat-peitel-backend.onrender.com",
     "http://127.0.0.1:8000",
     "http://192.168.30.227:8000",
+    "https://snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
+    "snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
 ]
 
 # ✅ Tell Django that requests from Render’s proxy are HTTPS
