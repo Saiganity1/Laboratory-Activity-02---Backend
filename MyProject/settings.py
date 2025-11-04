@@ -34,7 +34,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://192.168.30.227:8000",
     "https://snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
-    "snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
 ]
 
 # ✅ Tell Django that requests from Render’s proxy are HTTPS
