@@ -15,37 +15,43 @@ SECRET_KEY = os.environ.get(
     "django-insecure-v3us$9a_-mhmeu+63l8f-p3gvcl#b+yxgjj+81xy=-fc@*p3_g"
 )
 
-# ✅ Turn off debug for production
-DEBUG = False
+# Turn off debug for production; default to True for local development unless env var set
+DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in ("1", "true", "yes")
 
-# ✅ Render domain and local dev hosts
+# ✅ Render domain and local dev hosts (hostnames/IPs only, no scheme or port)
 ALLOWED_HOSTS = [
     "sicat-peitel-backend.onrender.com",
     "localhost",
     "127.0.0.1",
     "192.168.30.227",
-    "https://snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
-    "snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
+    "192.168.56.1",
+    "snack.expo.dev",
 ]
-
 # ✅ CSRF trusted origins (must include scheme)
 CSRF_TRUSTED_ORIGINS = [
     "https://sicat-peitel-backend.onrender.com",
     "http://127.0.0.1:8000",
     "http://192.168.30.227:8000",
     "https://snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
-    "snack.expo.dev/@saigan/github.com-saiganity1-laboratory-activity-02---frontend",
 ]
 
-# ✅ Tell Django that requests from Render’s proxy are HTTPS
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+if DEBUG:
+    # Add HTTPS variants for local development when using sslserver
+    CSRF_TRUSTED_ORIGINS += [
+        "https://127.0.0.1:8000",
+        "https://localhost:8000",
+        "https://192.168.30.227:8000",
+    ]
 
-# ✅ Enable HTTPS-only cookies in production
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+# ✅ Tell Django that requests from Render’s proxy are HTTPS (production only)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") if not DEBUG else None
 
-# ✅ Redirect all HTTP traffic to HTTPS
-SECURE_SSL_REDIRECT = True
+# Enable HTTPS-only cookies and redirect only when DEBUG is False (production)
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+
+# Redirect all HTTP traffic to HTTPS in production only
+SECURE_SSL_REDIRECT = not DEBUG
 
 # -------------------------
 # APPLICATIONS
@@ -61,6 +67,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
 ]
+
+if DEBUG:
+    INSTALLED_APPS.append("sslserver")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -80,7 +89,7 @@ CORS_ALLOW_ALL_ORIGINS = True  # You can tighten this later if needed
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "MyProject" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -139,8 +148,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # -------------------------
 # LOCAL DEVELOPMENT HELPERS
 # -------------------------
-# If you’re running locally and want to debug again, just set:
-# DEBUG = True
-# SECURE_SSL_REDIRECT = False
-# CSRF_COOKIE_SECURE = False
-# SESSION_COOKIE_SECURE = False
+# If you’re running locally and want to debug, set the environment variable:
+# setx DJANGO_DEBUG True  (Windows) or export DJANGO_DEBUG=True (Linux/macOS)
